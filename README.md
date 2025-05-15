@@ -1,3 +1,5 @@
+![Flake8 Linting](https://github.com/EstebanMJO/simpe-portfolio/actions/workflows/lint.yml/badge.svg) ![Flake8 Linting](https://github.com/EstebanMJO/simpe-portfolio/actions/workflows/pytest.yml/badge.svg)
+
 # simpe-portfolio
 Implementatio of a simple stock portfolio. This repo was created following this instructions:
 
