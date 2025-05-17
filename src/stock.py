@@ -4,8 +4,8 @@ class Stock:
     This class represents a stock with a symbol and price.
     It is implemented as a Singleton to ensure only one instance of each stock
     exists. This is useful for managing stock prices and ensuring that the same
-    stock is not duplicated in the portfolio and avoid having one stock with
-    different prices.
+    stock is not duplicated in the portfolio and also avoid having one stock
+    with different prices.
     '''
 
     # This class variable holds the instances of the stocks
@@ -24,6 +24,8 @@ class Stock:
             # Update the price of the existing stock instance
             if price != stock.price:
                 stock.current_price(price)
+
+            print(f"Returning existing stock instance of {symbol}")
             return stock
 
         # If the stock does not exist, create a new instance and store it in
