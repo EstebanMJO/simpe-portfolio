@@ -86,3 +86,134 @@ class Stock:
         This method returns all the instances of the stocks.
         '''
         return self._instances
+
+    def get_stock_symbol(self):
+        '''
+        This method returns the symbol of the stock.
+        '''
+        return self.symbol
+
+
+class StockCollection:
+
+    def __init__(self,
+                 stocks_qty: dict[str: float] = {},
+                 target_value: float = None):
+        '''
+        This method initializes the collection with the stocks and their
+        quantities.
+        The stocks_qty parameter is a dictionary with the stock symbol as the
+        key and the quantity as the value.
+        The target_value parameter is the total value of the stocks in the
+        collection. If it is provided, the quantities will be scaled
+        according to the target value.
+        '''
+
+        self.stocks = {}
+        self.create_from_qty(stocks_qty)
+
+        # If the total value is provided, scale the quantities
+        # according to the total value
+
+        if target_value is not None:
+            print(f"Scaling stocks to target value {target_value}")
+            self.scale_stocks(target_value)
+
+    def set_stock_qty(self, symbol: str, quantity: float) -> None:
+        '''
+        This method sets the quantity of a stock in the collection.
+        '''
+
+        if not Stock.exists_instance(symbol):
+            raise ValueError(
+                f"Stock {symbol} not found. Please create the stock first.")
+
+        if quantity <= 0 or not isinstance(quantity, (int, float)):
+            raise ValueError("Quantity must be a number greater than zero")
+
+        stock = Stock(symbol)
+        self.stocks[stock] = quantity
+
+    def create_from_qty(self, stocks_qty: dict[str: float]):
+        '''
+        This method creates a collection of stocks from a dictionary.
+        The dictionary must have the stock symbol as the key and the quantity
+        as the value.
+        '''
+        for symbol, qty in stocks_qty.items():
+            self.set_stock_qty(symbol, qty)
+
+    def scale_stocks(self, target_value: float):
+        '''
+        This method scales the stocks according to the total value.
+        '''
+        current_value = self.get_value()
+
+        if target_value <= 0:
+            raise ValueError("Target value must be greater than zero")
+
+        for stock, qty in self.stocks.items():
+            # Scale the quantity according to the target value
+            target_qty = qty * target_value / current_value
+            self.set_stock_qty(stock.symbol, target_qty)
+
+    def get_value(self):
+        '''
+        This method returns the total value of the stocks in the collection.
+        '''
+        total_value = sum(
+            stock.price * qty for stock, qty in self.stocks.items())
+
+        return total_value
+
+    def get_allocation(self):
+        '''
+        This method returns the allocation of the stocks in the collection.
+        The allocation is the percentage of each stock in the total value of
+        the collection.
+        '''
+        allocation = {}
+        total_value = self.get_value()
+        for stock, qty in self.stocks.items():
+            allocation[stock] = qty*stock.price / total_value
+
+        return allocation
+
+    def delete_stock(self, symbol: str) -> None:
+        '''
+        This method deletes a stock from the collection.
+        '''
+        if not Stock.exists_instance(symbol):
+            raise ValueError(
+                f"{symbol} is not a Stock")
+
+        stock = Stock(symbol)
+        if stock not in self.stocks:
+            raise ValueError(
+                f"Stock {symbol} not found in the collection.")
+
+        del self.stocks[stock]
+
+    def get_stocks_set(self):
+        '''
+        This method returns the set of stocks in the collection.
+        '''
+        return set(self.stocks.keys())
+
+    def modify_stock_qty(self, symbol: str, qty: float) -> None:
+        '''
+        This method modifies the quantity of a stock in the collection.
+        '''
+        if not Stock.exists_instance(symbol):
+            raise ValueError(
+                f"Stock {symbol} not found. Please create the stock first.")
+
+        stock = Stock(symbol)
+        cuurent_qty = self.stocks[stock]
+        if cuurent_qty + qty < 0:
+            raise ValueError(
+                f'''
+                Stock {symbol} quantity cannot be negative.
+                Current quantity: {cuurent_qty}, modification: {qty}''')
+
+        self.stocks[stock] = qty
