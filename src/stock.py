@@ -1,3 +1,5 @@
+from utils import get_valid_symbol
+
 
 class Stock:
     '''
@@ -78,56 +80,9 @@ class Stock:
 
         print(f"Updating price for {self.symbol} from {self.price} to {price}")
         self.price = price
-        return self.price
 
-
-class StockCollection:
-    '''
-    This class represents a collection of stocks. This class should ensure the
-    integrity of the stocks in the collection.
-    '''
-
-    def __init__(self, dict: dict[Stock: float] = None):
+    def get_all_instances(self):
         '''
-        This method initializes the collection with a dictionary of stocks.
-        The dictionary should have the stock as the key and the quantity as the
-        value.
+        This method returns all the instances of the stocks.
         '''
-
-        self.stocks = {}
-        for stock, quantity in dict.items():
-            self.add_stock(stock, quantity)
-
-    def add_stock(self, stock: Stock, quantity: float):
-        '''
-        This method adds a stock to the collection.
-        '''
-        if not isinstance(stock, Stock):
-            raise ValueError("Stock must be an instance of Stock class")
-        if quantity <= 0:
-            raise ValueError("Quantity must be greater than zero")
-
-        if stock.symbol in self.stocks:
-            self.stocks[stock.symbol] += quantity
-        else:
-            self.stocks[stock.symbol] = quantity
-
-    def remove_stock(self, stock: Stock, quantity: float):
-        '''
-        This method removes a stock from the collection.
-        '''
-        if not isinstance(stock, Stock):
-            raise ValueError("Stock must be an instance of Stock class")
-        if quantity <= 0:
-            raise ValueError("Quantity must be greater than zero")
-
-        if stock.symbol not in self.stocks:
-            raise ValueError("Stock not found in collection")
-
-        if self.stocks[stock.symbol] < quantity:
-            raise ValueError("Not enough stock to remove")
-
-        self.stocks[stock.symbol] -= quantity
-
-        if self.stocks[stock.symbol] == 0:
-            del self.stocks[stock.symbol]
+        return self._instances
