@@ -1,13 +1,27 @@
+'''
+This module contains Stock and StockCollection classes. I decided to modularize
+the code to make it easier to test and maintain.
+
+The Stock class is implemented as a Singleton to ensure that only one instance
+of each stock exists. This is useful for managing stock prices and ensuring
+that the same stock is not duplicated in the portfolio and also avoid having
+one stock with different prices.
+
+The StockCollection class is used to manage a collection of stocks. It allows
+to create a collection of stocks from a dictionary of stock symbols and
+quantities or from a dictionary of stock symbols, allocations and total value.
+I decided to implement this class to make it easier to manage a collection of
+stocks and to provide a way to calculate the total value of the collection
+and the allocation of each stock in the collection.
+'''
+
 from src.utils import get_valid_symbol, check_valid_allocation
 
 
 class Stock:
     '''
-    This class represents a stock with a symbol and price.
-    It is implemented as a Singleton to ensure only one instance of each stock
-    exists. This is useful for managing stock prices and ensuring that the same
-    stock is not duplicated in the portfolio and also avoid having one stock
-    with different prices.
+    This class represents a stock with a symbol and price.It is implemented as
+    a Singleton to ensure only one instance of each stock exists.
     '''
 
     # This class variable holds the instances of the stocks
@@ -19,7 +33,6 @@ class Stock:
         This method checks if an instance of the stock with the given symbol
         already exists.
         '''
-        # Check if the symbol is valid
         symbol = get_valid_symbol(symbol)
         return symbol in cls._instances
 
@@ -60,8 +73,6 @@ class Stock:
         This method initializes the instance with the symbol and price.
         It is called only once when the instance is created.
         '''
-        symbol = get_valid_symbol(symbol)
-
         # If the price is not valid, raise an error
         if price <= 0:
             raise ValueError("Price must be greater than zero")
@@ -81,21 +92,17 @@ class Stock:
         print(f"Updating price for {self.symbol} from {self.price} to {price}")
         self.price = price
 
-    def get_all_instances(self):
-        '''
-        This method returns all the instances of the stocks.
-        '''
-        return self._instances
-
-    def get_stock_symbol(self):
-        '''
-        This method returns the symbol of the stock.
-        '''
-        return self.symbol
-
 
 class StockCollection:
-
+    '''
+    The main objective of this class is to handle a group of stocks. You can
+    create a collection of stocks from a dictionary of stock symbols and
+    quantities or from a dictionary of stock symbols, allocations and total
+    value.
+    The class also provides methods modify the collection of stocks and
+    calculate its main properties, such as the total value and the allocation
+    of each stock in the collection.
+    '''
     def __init__(
             self, *,   # the * is used to force the use of keyword arguments
             stocks_qty: dict[str: float] = {},
@@ -104,15 +111,7 @@ class StockCollection:
         '''
         This method initializes the collection with the stocks and their
         quantities.
-        The stocks_qty parameter is a dictionary with the stock symbol as the
-        key and the quantity as the value.
-        The stocks_allocation parameter is a dictionary with the stock symbol
-        as the key and the allocation as the value. The allocation is the
-        percentage of the total value of the collection (it should sum 1).
-        The target_value parameter is the total value of the stocks in the
-        collection.
         '''
-
         self.stocks = {}
 
         if stocks_allocation is not None and total_value is not None:
@@ -132,8 +131,8 @@ class StockCollection:
             raise ValueError("Quantity must be a number")
 
         if not Stock.exists_instance(symbol):
-            raise ValueError(
-                f"Stock {symbol} not found. Please create the stock first.")
+            raise ValueError( '''Stock {symbol} not created. Please instanciate
+                             the stock first.''')
 
         if quantity <= 0:
             raise ValueError("Quantity must be a number greater than zero")
@@ -144,8 +143,8 @@ class StockCollection:
     def create_from_qty(self, stocks_qty: dict[str: float]):
         '''
         This method creates a collection of stocks from a dictionary.
-        The dictionary must have the stock symbol as the key and the quantity
-        as the value.
+        The stock_qty dictionary must have the stock symbol as the key and the
+        quantity as the value.
         '''
         for symbol, qty in stocks_qty.items():
             self.set_stock_qty(symbol, qty)
@@ -154,10 +153,11 @@ class StockCollection:
                                stocks_allocation: dict[str: float],
                                total_value: float):
         '''
-        This method creates a collection of stocks from a dictionary.
-        The dictionary must have the stock symbol as the key and the
-        allocation as the value. The allocation is the percentage of the
-        total value of the collection (it should sum 1).
+        This method creates a collection of stocks from is allocation and total
+        value.
+        The stock_allocation dictionary must have the stock symbol as the key
+        and the allocation as the value. The allocation is the percentage of }
+        the total value of the collection (it should sum 1).
         '''
         check_valid_allocation(stocks_allocation)
 
