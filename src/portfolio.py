@@ -1,4 +1,4 @@
-from src.stock import StockCollection
+from src.stocks import StockCollection
 from src.utils import check_valid_allocation
 
 
@@ -6,7 +6,14 @@ class Portfolio:
     def __init__(self,
                  name: str,
                  stocks_collection: StockCollection) -> None:
-
+        '''
+        This class represents a portfolio of stocks. It contains a collection
+        of stocks and a target allocation for each stock. The target allocation
+        is the percentage of the total value of the portfolio that should be
+        allocated to each stock. The portfolio can be used to track the
+        performance of the stocks and to rebalance the portfolio to meet the
+        target allocation.
+        '''
         self.name = name
         self.stocks_collection = stocks_collection
         self.stocks_qty_target = {}
@@ -52,3 +59,6 @@ class Portfolio:
             deviation[stock] = current_qty
 
         return deviation
+
+    def rebalance(self) -> None:
+        pass

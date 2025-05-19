@@ -1,5 +1,5 @@
-from src.stock import StockCollection
-from src.stock import Stock
+from src.stocks import StockCollection
+from src.stocks import Stock
 import pytest
 
 

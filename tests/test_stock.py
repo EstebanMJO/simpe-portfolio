@@ -1,5 +1,5 @@
 import pytest
-from src.stock import Stock
+from src.stocks import Stock
 
 
 def test_stock_initialization():
