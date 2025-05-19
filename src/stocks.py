@@ -162,7 +162,9 @@ class StockCollection:
         check_valid_allocation(stocks_allocation)
 
         for symbol, allocation in stocks_allocation.items():
-            stock = Stock(symbol)
+            if not isinstance(symbol, Stock):
+                stock = Stock(symbol)
+
             stock_value = allocation * total_value
             stock_qty = stock_value / stock.price
             self.stocks[stock] = stock_qty
