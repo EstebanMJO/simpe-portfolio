@@ -1,4 +1,4 @@
-from utils import get_valid_symbol
+from src.utils import get_valid_symbol
 
 
 class Stock:
@@ -96,39 +96,46 @@ class Stock:
 
 class StockCollection:
 
-    def __init__(self,
-                 stocks_qty: dict[str: float] = {},
-                 target_value: float = None):
+    def __init__(
+            self, *,   # the * is used to force the use of keyword arguments
+            stocks_qty: dict[str: float] = {},
+            stocks_allocation: dict[str: float] = None,
+            total_value: float = None):
         '''
         This method initializes the collection with the stocks and their
         quantities.
         The stocks_qty parameter is a dictionary with the stock symbol as the
         key and the quantity as the value.
+        The stocks_allocation parameter is a dictionary with the stock symbol
+        as the key and the allocation as the value. The allocation is the
+        percentage of the total value of the collection (it should sum 1).
         The target_value parameter is the total value of the stocks in the
-        collection. If it is provided, the quantities will be scaled
-        according to the target value.
+        collection.
         '''
 
         self.stocks = {}
-        self.create_from_qty(stocks_qty)
 
-        # If the total value is provided, scale the quantities
-        # according to the total value
+        if stocks_allocation is not None and total_value is not None:
+            print('Creating stock collection using stocks_allocation')
+            self.create_from_allocation(stocks_allocation, total_value)
 
-        if target_value is not None:
-            print(f"Scaling stocks to target value {target_value}")
-            self.scale_stocks(target_value)
+        else:
+            print('Creating stock collection using stocks_qty')
+            self.create_from_qty(stocks_qty)
 
     def set_stock_qty(self, symbol: str, quantity: float) -> None:
         '''
         This method sets the quantity of a stock in the collection.
         '''
 
+        if not isinstance(quantity, (int, float)):
+            raise ValueError("Quantity must be a number")
+
         if not Stock.exists_instance(symbol):
             raise ValueError(
                 f"Stock {symbol} not found. Please create the stock first.")
 
-        if quantity <= 0 or not isinstance(quantity, (int, float)):
+        if quantity <= 0:
             raise ValueError("Quantity must be a number greater than zero")
 
         stock = Stock(symbol)
@@ -143,19 +150,31 @@ class StockCollection:
         for symbol, qty in stocks_qty.items():
             self.set_stock_qty(symbol, qty)
 
-    def scale_stocks(self, target_value: float):
+    def create_from_allocation(self,
+                               stocks_allocation: dict[str: float],
+                               total_value: float):
         '''
-        This method scales the stocks according to the total value.
+        This method creates a collection of stocks from a dictionary.
+        The dictionary must have the stock symbol as the key and the
+        allocation as the value. The allocation is the percentage of the
+        total value of the collection (it should sum 1).
         '''
-        current_value = self.get_value()
+        if sum(stocks_allocation.values()) != 1:
+            raise ValueError(
+                "The sum of the allocations must be equal to 1")
 
-        if target_value <= 0:
-            raise ValueError("Target value must be greater than zero")
+        for symbol, allocation in stocks_allocation.items():
+            if not isinstance(allocation, (int, float)):
+                raise ValueError("Allocation must be a number")
 
-        for stock, qty in self.stocks.items():
-            # Scale the quantity according to the target value
-            target_qty = qty * target_value / current_value
-            self.set_stock_qty(stock.symbol, target_qty)
+            if allocation <= 0:
+                raise ValueError(
+                    "Allocation must be a number greater than zero")
+
+            stock = Stock(symbol)
+            stock_value = allocation * total_value
+            stock_qty = stock_value / stock.price
+            self.stocks[stock] = stock_qty
 
     def get_value(self):
         '''
