@@ -3,9 +3,10 @@ This test file is for testing the SockCollection class.
 It contains tests for the initialization and its methods.
 '''
 
+import pytest
+import math
 from src.stocks import StockCollection
 from src.stocks import Stock
-import pytest
 
 
 @pytest.fixture
@@ -39,7 +40,7 @@ def test_initialization_from_allocation(stock_singleton):
     assert isinstance(stock_collection, StockCollection)
     assert len(stock_collection.stocks) == 2
 
-    assert round(stock_collection.get_value(), 6) == 1000
+    assert math.isclose(stock_collection.get_value(), 1000)
 
     assert stock_collection.stocks[Stock('S100')] == 5
     assert stock_collection.stocks[Stock('S200')] == 2.5
@@ -49,16 +50,16 @@ def test_set_stock_qty(stock_singleton):
     stock_collection = StockCollection()
     stock_collection.set_stock_qty('S100', 10)
     assert stock_collection.stocks[Stock('S100')] == 10
-    assert round(stock_collection.get_value(), 6) == 1000
+    assert math.isclose(stock_collection.get_value(), 1000)
 
     stock_collection.set_stock_qty('S200', 20)
     assert stock_collection.stocks[Stock('S200')] == 20
     assert stock_collection.stocks[Stock('S100')] == 10
-    assert round(stock_collection.get_value(), 6) == 5000
+    assert math.isclose(stock_collection.get_value(), 5000)
 
     stock_collection.set_stock_qty('S100', 5)
     assert stock_collection.stocks[Stock('S100')] == 5
-    assert round(stock_collection.get_value(), 6) == 4500
+    assert math.isclose(stock_collection.get_value(), 4500)
 
 
 def test_set_stock_qty_invalid(stock_singleton):
