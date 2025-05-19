@@ -10,7 +10,7 @@ def test_stock_initialization():
 
 def test_stock_update_price():
     stock = Stock("AAPL", 150)
-    stock.current_price(155)
+    stock.update_price(155)
     assert stock.price == 155
 
 
@@ -27,7 +27,7 @@ def test_stock_invalid_symbol():
 def test_stock_invalid_price_update():
     stock = Stock("AAPL", 150)
     with pytest.raises(ValueError):
-        stock.current_price(-155)
+        stock.update_price(-155)
 
 
 def test_stock_singleton():
