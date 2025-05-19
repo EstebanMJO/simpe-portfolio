@@ -74,7 +74,7 @@ class Portfolio:
 
         return deviation
 
-    def get_rebalance(self) -> None:
+    def rebalance(self) -> None:
         '''
         This method rebalances the portfolio to meet the target allocation.
         It sells stocks that are overallocated and buys stocks that are
