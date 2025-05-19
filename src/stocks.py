@@ -167,7 +167,7 @@ class StockCollection:
             stock_qty = stock_value / stock.price
             self.stocks[stock] = stock_qty
 
-    def get_value(self):
+    def get_value(self) -> float:
         '''
         This method returns the total value of the stocks in the collection.
         '''
@@ -176,7 +176,7 @@ class StockCollection:
 
         return total_value
 
-    def get_allocation(self):
+    def get_allocation(self) -> dict[Stock: float]:
         '''
         This method returns the allocation of the stocks in the collection.
         The allocation is the percentage of each stock in the total value of

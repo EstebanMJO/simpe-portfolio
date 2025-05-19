@@ -1,4 +1,4 @@
-from src.stocks import StockCollection
+from src.stocks import StockCollection, Stock
 from src.utils import check_valid_allocation
 
 
@@ -42,7 +42,7 @@ class Portfolio:
             stocks_allocation=self.allocation_target,
             total_value=portfolio_value)
 
-    def get_stocks_qty_deviation(self) -> dict[str: float]:
+    def get_stocks_qty_deviation(self) -> dict[Stock: float]:
         '''
         this method returns the deviation of the current stocks in the portfolio
         from the target stocks. The deviation is a dictionary with the stock
