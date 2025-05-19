@@ -116,11 +116,11 @@ class StockCollection:
 
         if stocks_allocation is not None and total_value is not None:
             print('Creating stock collection using stocks_allocation')
-            self.create_from_allocation(stocks_allocation, total_value)
+            self._create_from_allocation(stocks_allocation, total_value)
 
         else:
             print('Creating stock collection using stocks_qty')
-            self.create_from_qty(stocks_qty)
+            self._create_from_qty(stocks_qty)
 
     def set_stock_qty(self, symbol: str, quantity: float) -> None:
         '''
@@ -140,7 +140,7 @@ class StockCollection:
         stock = Stock(symbol)
         self.stocks[stock] = quantity
 
-    def create_from_qty(self, stocks_qty: dict[str: float]):
+    def _create_from_qty(self, stocks_qty: dict[str: float]):
         '''
         This method creates a collection of stocks from a dictionary.
         The stock_qty dictionary must have the stock symbol as the key and the
@@ -149,9 +149,9 @@ class StockCollection:
         for symbol, qty in stocks_qty.items():
             self.set_stock_qty(symbol, qty)
 
-    def create_from_allocation(self,
-                               stocks_allocation: dict[str: float],
-                               total_value: float):
+    def _create_from_allocation(self,
+                                stocks_allocation: dict[str: float],
+                                total_value: float):
         '''
         This method creates a collection of stocks from is allocation and total
         value.
@@ -189,41 +189,45 @@ class StockCollection:
 
         return allocation
 
-    def delete_stock(self, symbol: str) -> None:
+    def delete_stock(self, stock: Stock) -> None:
         '''
         This method deletes a stock from the collection.
         '''
-        if not Stock.exists_instance(symbol):
+        if not isinstance(stock, Stock):
             raise ValueError(
-                f"{symbol} is not a Stock")
+                f"Stock {stock} is not a valid stock instance.")
 
-        stock = Stock(symbol)
         if stock not in self.stocks:
             raise ValueError(
-                f"Stock {symbol} not found in the collection.")
+                f"Stock {stock} not found in the collection.")
 
         del self.stocks[stock]
 
-    def get_stocks_set(self):
+    def get_stocks_set(self) -> set[Stock]:
         '''
-        This method returns the set of stocks in the collection.
+        This method returns a set of stocks in the collection.
         '''
         return set(self.stocks.keys())
 
-    def modify_stock_qty(self, symbol: str, qty: float) -> None:
+    def modify_stock_qty(self, stock: Stock, qty: float) -> None:
         '''
         This method modifies the quantity of a stock in the collection.
         '''
-        if not Stock.exists_instance(symbol):
+        if not isinstance(stock, Stock):
             raise ValueError(
-                f"Stock {symbol} not found. Please create the stock first.")
+                f"Stock {stock} is not a valid stock instance.")
 
-        stock = Stock(symbol)
-        cuurent_qty = self.stocks[stock]
-        if cuurent_qty + qty < 0:
-            raise ValueError(
-                f'''
-                Stock {symbol} quantity cannot be negative.
-                Current quantity: {cuurent_qty}, modification: {qty}''')
+        if stock not in self.stocks:
+            current_qty = 0
+        else:
+            current_qty = self.stocks[stock]
+        target_qty = current_qty + qty
+        if target_qty < 0:
+            raise ValueError(f'''Not enough quantity of stock {stock} to modify.
+                Current quantity: {current_qty}, modification: {qty}''')
 
-        self.stocks[stock] = qty
+        if target_qty == 0:
+            self.delete_stock(stock)
+
+        else:
+            self.stocks[stock] = target_qty

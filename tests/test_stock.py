@@ -1,3 +1,8 @@
+'''
+This test file is for testing the Stock class, ensuring its singleton behaviour
+and main capabilities.
+'''
+
 import pytest
 from src.stocks import Stock
 
