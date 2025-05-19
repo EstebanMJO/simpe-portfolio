@@ -21,19 +21,33 @@ class Portfolio:
 
     def set_allocation_target(self,
                               allocation_target: dict[str: float]) -> None:
+        '''
+        Sets the allocation target for the portfolio. The allocation target
+        is a dictionary with the stock symbol as the key and the allocation
+        as the value. The allocation is the percentage of the total value of
+        the portfolio that should be allocated to each stock. The allocation
+        target must sum to 1.
+        '''
         check_valid_allocation(allocation_target)
         self.allocation_target = allocation_target
 
     def update_stocks_qty_target(self) -> None:
         '''
-        This method sets the allocation target for the portfolio.
+        This method sets the target quantity of stocks in the portfolio. The
+        target quantity is calculated based on the target allocation and the
+        total value of the portfolio.
         '''
         portfolio_value = self.stocks_collection.get_value()
         self.stocks_qty_target = StockCollection(
             stocks_allocation=self.allocation_target,
             total_value=portfolio_value)
 
-    def get_allocation_deviation(self):
+    def get_stocks_qty_deviation(self) -> dict[str: float]:
+        '''
+        this method returns the deviation of the current stocks in the portfolio
+        from the target stocks. The deviation is a dictionary with the stock
+        symbol as the key and the deviation as the value.
+        '''
 
         self.update_stocks_qty_target()
         deviation = {}
