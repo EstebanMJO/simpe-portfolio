@@ -83,4 +83,31 @@ class Portfolio:
         deviation = self.get_stocks_qty_deviation()
 
         for stock, qty in deviation.items():
-            self.stocks_collection.modify_stock_qty(stock.symbol, qty)
+            self.stocks_collection.modify_stock_qty(stock, qty)
+
+    def invert_money(self, value: float) -> None:
+        '''
+        This method inverts the money in the portfolio. It buys stocks to
+        augment the portfolio value while keeping the previous allocation.
+        '''
+        current_allocation = self.stocks_collection.get_allocation()
+
+        for stock in current_allocation.keys():
+            stock_new_investment = current_allocation[stock] * value
+            adding_stock_qty = stock_new_investment / stock.price
+
+            self.stocks_collection.modify_stock_qty(
+                stock, adding_stock_qty)
+
+    def retire_money(self, value: float) -> None:
+        '''
+        This method retires money from the portfolio. It sells stocks to
+        reduce the portfolio value while keeping the previous allocation.
+        '''
+        current_allocation = self.stocks_collection.get_allocation()
+        for stock in current_allocation.keys():
+            stock_new_investment = current_allocation[stock] * value
+            removing_stock_qty = stock_new_investment / stock.price
+
+            self.stocks_collection.modify_stock_qty(
+                stock, -removing_stock_qty)
