@@ -131,7 +131,7 @@ class StockCollection:
             raise ValueError("Quantity must be a number")
 
         if not Stock.exists_instance(symbol):
-            raise ValueError( '''Stock {symbol} not created. Please instanciate
+            raise ValueError('''Stock {symbol} not created. Please instanciate
                              the stock first.''')
 
         if quantity <= 0:
