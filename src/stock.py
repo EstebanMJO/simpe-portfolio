@@ -1,4 +1,4 @@
-from src.utils import get_valid_symbol
+from src.utils import get_valid_symbol, check_valid_allocation
 
 
 class Stock:
@@ -159,18 +159,9 @@ class StockCollection:
         allocation as the value. The allocation is the percentage of the
         total value of the collection (it should sum 1).
         '''
-        if sum(stocks_allocation.values()) != 1:
-            raise ValueError(
-                "The sum of the allocations must be equal to 1")
+        check_valid_allocation(stocks_allocation)
 
         for symbol, allocation in stocks_allocation.items():
-            if not isinstance(allocation, (int, float)):
-                raise ValueError("Allocation must be a number")
-
-            if allocation <= 0:
-                raise ValueError(
-                    "Allocation must be a number greater than zero")
-
             stock = Stock(symbol)
             stock_value = allocation * total_value
             stock_qty = stock_value / stock.price

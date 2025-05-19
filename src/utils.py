@@ -10,3 +10,16 @@ def get_valid_symbol(symbol: str):
     symbol = symbol.upper()
 
     return symbol
+
+
+def check_valid_allocation(stocks_allocation: dict[str: float]):
+
+    if sum(stocks_allocation.values()) != 1:
+        raise ValueError("The sum of the allocations must be equal to 1")
+
+    for symbol, allocation in stocks_allocation.items():
+        if not isinstance(allocation, (int, float)):
+            raise ValueError("Allocation must be a number")
+
+        if allocation <= 0:
+            raise ValueError("Allocation must be a number greater than zero")
