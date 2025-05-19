@@ -74,7 +74,7 @@ class Portfolio:
 
         return deviation
 
-    def rebalance(self) -> None:
+    def get_rebalance(self) -> None:
         '''
         This method rebalances the portfolio to meet the target allocation.
         It sells stocks that are overallocated and buys stocks that are
@@ -104,6 +104,12 @@ class Portfolio:
         This method retires money from the portfolio. It sells stocks to
         reduce the portfolio value while keeping the previous allocation.
         '''
+        current_value = self.stocks_collection.get_value()
+        if value > current_value:
+            raise ValueError(
+                f'''Cannot retire more money than the portfolio value:
+                {current_value}''')
+
         current_allocation = self.stocks_collection.get_allocation()
         for stock in current_allocation.keys():
             stock_new_investment = current_allocation[stock] * value
