@@ -62,15 +62,15 @@ class Portfolio:
         for stock in modified_stocks:
             target_qty = self.stocks_qty_target.stocks[stock]
             current_qty = self.stocks_collection.stocks[stock]
-            deviation[stock] = current_qty - target_qty
+            deviation[stock] = target_qty - current_qty
 
         for stock in new_stocks:
             target_qty = self.stocks_qty_target.stocks[stock]
-            deviation[stock] = -target_qty
+            deviation[stock] = target_qty
 
         for stock in removed_stocks:
             current_qty = self.stocks_collection.stocks[stock]
-            deviation[stock] = current_qty
+            deviation[stock] = -current_qty
 
         return deviation
 

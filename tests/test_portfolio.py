@@ -108,11 +108,15 @@ def test_get_stocks_qty_deviation(stocks,
                                   even_allocation_stockcollection,
                                   even_allocation):
     '''
-    This tests the get_stocks_qty_deviation method of the Portfolio class. The
-    get_stocks_qty_deviation method is used to get the deviation of the stocks
-    qty in the portfolio. The method should return a dictionary with the stock
-    symbol as the key and the deviation as the value.
+    This test creates a portfolio with a collection of stocks whith same qty
+    stocks (total value = 600). Then it inverts 400 to match the total value
+    to 1000. The allocation should be the same as the initial allocation.
+
+    Then, it changes the allocation target to even allocation and get the stocks
+    qty deviation. The deviation should be the same as the difference between
+    same_qty_stockcollection and even_allocation_stockcollection.
     '''
+
     portfolio = Portfolio(
         name='Test Portfolio',
         stocks_collection=same_qty_stockcollection)
@@ -133,4 +137,78 @@ def test_get_stocks_qty_deviation(stocks,
         assert math.isclose(stock_deviation, target_deviation)
 
 
+def test_rebalance(stocks,
+                   even_allocation_stockcollection,
+                   even_allocation,
+                   same_qty_stockcollection,
+                   same_qty_allocation):
+    '''
+    This is a systemic test of the Portfolio class. It tests the system as a
+    whole.
 
+    Then, it rebalances the portfolio to match the target allocation. The the
+
+    Then stocks S100 and S300 sweeps prices. The portfolio should update the
+    allocation to reflect the new prices.
+    '''
+    portfolio = Portfolio(
+        name='Test Portfolio',
+        stocks_collection=even_allocation_stockcollection)
+
+    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
+
+    portfolio.retire_money(400)
+    assert math.isclose(portfolio.stocks_collection.get_value(), 600)
+
+    portfolio.set_allocation_target(same_qty_allocation)
+    portfolio.rebalance()
+    assert math.isclose(portfolio.stocks_collection.get_value(), 600)
+
+    for stock, qty in portfolio.stocks_collection.stocks.items():
+        assert math.isclose(qty, same_qty_stockcollection.stocks[stock])
+
+
+def test_update_stock_price(stocks,
+                            even_allocation_stockcollection,
+                            even_allocation):
+    '''
+    This test updates the stock price and checks if the portfolio updates the
+    allocation to reflect the new prices.
+    '''
+    stock_1 = Stock('TEST1', price=600)
+    stock_2 = Stock('TEST2', price=400)
+
+    stock_collection = StockCollection(stocks_qty={'TEST1': 1,
+                                                   'TEST2': 1})
+
+    portfolio = Portfolio(
+        name='Test Portfolio',
+        stocks_collection=stock_collection)
+
+    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
+
+    portfolio_allocation = portfolio.stocks_collection.get_allocation()
+    portfolio.set_allocation_target(portfolio_allocation)
+
+    assert math.isclose(portfolio_allocation[stock_1], 0.6)
+    assert math.isclose(portfolio_allocation[stock_2], 0.4)
+    assert math.isclose(portfolio.allocation_target[stock_1], 0.6)
+    assert math.isclose(portfolio.allocation_target[stock_2], 0.4)
+
+    # Updating the stock prices
+    stock_1.update_price(400)
+    stock_2.update_price(600)
+
+    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
+
+    portfolio_allocation = portfolio.stocks_collection.get_allocation()
+
+    assert math.isclose(portfolio_allocation[stock_1], 0.4)
+    assert math.isclose(portfolio_allocation[stock_2], 0.6)
+    assert math.isclose(portfolio.allocation_target[stock_1], 0.6)
+    assert math.isclose(portfolio.allocation_target[stock_2], 0.4)
+
+    # Rebalancing the portfolio
+    stock_1.update_price(1200)
+    stock_2.update_price(800)
+    assert math.isclose(portfolio.stocks_collection.get_value(), 2000)

@@ -161,9 +161,9 @@ class StockCollection:
         '''
         check_valid_allocation(stocks_allocation)
 
-        for symbol, allocation in stocks_allocation.items():
-            if not isinstance(symbol, Stock):
-                stock = Stock(symbol)
+        for stock, allocation in stocks_allocation.items():
+            if not isinstance(stock, Stock):
+                stock = Stock(stock)
 
             stock_value = allocation * total_value
             stock_qty = stock_value / stock.price
