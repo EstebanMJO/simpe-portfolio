@@ -3,21 +3,27 @@ from src.utils import check_valid_allocation
 
 
 class Portfolio:
+    '''
+    This class represents a portfolio of stocks. It contains a collection of
+    stocks and a target allocation for each stock. The target allocation is the
+    percentage of the total value of the portfolio that should be allocated to
+    each stock. The portfolio can be used to track the performance of the
+    stocks and to rebalance the portfolio to meet the target allocation.
+    '''
     def __init__(self,
                  name: str,
-                 stocks_collection: StockCollection) -> None:
-        '''
-        This class represents a portfolio of stocks. It contains a collection
-        of stocks and a target allocation for each stock. The target allocation
-        is the percentage of the total value of the portfolio that should be
-        allocated to each stock. The portfolio can be used to track the
-        performance of the stocks and to rebalance the portfolio to meet the
-        target allocation.
-        '''
+                 stocks_allocation: dict[str: float],
+                 total_value) -> None:
+
+        check_valid_allocation(stocks_allocation)
         self.name = name
-        self.stocks_collection = stocks_collection
-        self.stocks_qty_target = {}
-        self.allocation_target = {}
+
+        self.stocks_collection = StockCollection(
+            stocks_allocation=stocks_allocation,
+            total_value=total_value)
+
+        self.set_allocation_target(stocks_allocation)
+        self.update_stocks_qty_target()
 
     def set_allocation_target(self,
                               allocation_target: dict[str: float]) -> None:

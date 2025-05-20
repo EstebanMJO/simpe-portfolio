@@ -77,7 +77,8 @@ def test_invert_money(stocks, same_qty_stockcollection, same_qty_allocation):
         assert math.isclose(allocation, same_qty_allocation[stock])
 
 
-def test_retire_money(stocks, same_qty_stockcollection,
+def test_retire_money(stocks,
+                      same_qty_stockcollection,
                       same_qty_allocation):
     '''
     This tests the retire_money method of the Portfolio class. The retire_money
@@ -139,7 +140,6 @@ def test_get_stocks_qty_deviation(stocks,
 
 def test_rebalance(stocks,
                    even_allocation_stockcollection,
-                   even_allocation,
                    same_qty_stockcollection,
                    same_qty_allocation):
     '''
@@ -168,9 +168,7 @@ def test_rebalance(stocks,
         assert math.isclose(qty, same_qty_stockcollection.stocks[stock])
 
 
-def test_update_stock_price(stocks,
-                            even_allocation_stockcollection,
-                            even_allocation):
+def test_update_stock_price(stocks):
     '''
     This test updates the stock price and checks if the portfolio updates the
     allocation to reflect the new prices.
@@ -212,3 +210,4 @@ def test_update_stock_price(stocks,
     stock_1.update_price(1200)
     stock_2.update_price(800)
     assert math.isclose(portfolio.stocks_collection.get_value(), 2000)
+
