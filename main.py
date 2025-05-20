@@ -68,7 +68,7 @@ def select_allocation(allocation_path):
     allocation_file_path = os.path.join(allocation_path, allocation_file)
 
     with open(allocation_file_path, 'r') as f:
-        data = yaml.safe_load(f)#%%
+        data = yaml.safe_load(f)
 
     return data
 
