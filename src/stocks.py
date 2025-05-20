@@ -52,8 +52,6 @@ class Stock:
             # If the price is provided update the existing instance.
             if price is not None:
                 stock.update_price(price)
-
-            print(f"Returning existing stock instance of {symbol}")
             return stock
 
         # If the stock does not exist and price is None, raise an error
@@ -78,7 +76,6 @@ class Stock:
         if price <= 0:
             raise ValueError("Price must be greater than zero")
 
-        print(f"Creating new stock instance for {symbol} with price {price}")
         self.price = price
         self.symbol = symbol
 
@@ -90,7 +87,6 @@ class Stock:
         if price <= 0:
             raise ValueError("Price must be greater than zero")
 
-        print(f"Updating price for {self.symbol} from {self.price} to {price}")
         self.price = price
 
 
@@ -116,11 +112,9 @@ class StockCollection:
         self.stocks = {}
 
         if stocks_allocation is not None and total_value is not None:
-            print('Creating stock collection using stocks_allocation')
             self._create_from_allocation(stocks_allocation, total_value)
 
         else:
-            print('Creating stock collection using stocks_qty')
             self._create_from_qty(stocks_qty)
 
     def __eq__(self, other):
