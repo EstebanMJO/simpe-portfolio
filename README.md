@@ -7,6 +7,24 @@ Implementation of a simple stock portfolio. This repo was created following this
 Provide a portfolio rebalance method to know which Stocks should be sold and which ones should be bought to have a balanced Portfolio based on the portfolio’s allocation.
 Add documentation/comments to understand your thinking process and solution*
 
+# Installation
+First clone the repo in your local machine
+```
+git clone git@github.com:EstebanMJO/simple-portfolio.git
+```
+
+Then create an virtual environment and install all dependencies
+```
+cd path/to/simple-portfolio
+python -m venv your_venv
+source your-venv/bin/activate
+pip install -r requirements.txt
+```
+Then you can run a demo with
+```
+python -m main
+```
+
 # Repo sructure
 ## src/stocks
 In the file stocks.py are implemented the classes Stock and StockCollection.
