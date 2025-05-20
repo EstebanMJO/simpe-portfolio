@@ -243,4 +243,3 @@ def test_update_stock_price(stocks):
     stock_1.update_price(1200)
     stock_2.update_price(800)
     assert math.isclose(portfolio.stocks_collection.get_value(), 2000)
-
