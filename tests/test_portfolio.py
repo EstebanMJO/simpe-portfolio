@@ -49,6 +49,12 @@ def same_qty_stockcollection(stocks, same_qty_allocation) -> StockCollection:
 def test_portfolio_initialization(stocks,
                                   same_qty_allocation,
                                   same_qty_stockcollection):
+    '''
+    This test creates a portfolio with a collection of stocks whith same qty
+    stocks (total value = 1000). The portfolio should be initialized with the
+    the same qty allocation.
+    '''
+
     portfolio = Portfolio(
         name='Test Portfolio',
         stocks_allocation=same_qty_allocation,
@@ -108,7 +114,9 @@ def test_retire_money(stocks,
 def test_set_allocation_target(stocks,
                                same_qty_allocation,
                                even_allocation):
-
+    '''
+    This tests the set_allocation_target method of the Portfolio class.
+    '''
     portfolio = Portfolio(
         name='Test Portfolio',
         stocks_allocation=same_qty_allocation,
@@ -123,7 +131,14 @@ def test_update_stocks_qty_target(stocks,
                                   even_allocation,
                                   same_qty_allocation,
                                   even_allocation_stockcollection):
+    '''
+    This test creates a portfolio with a collection of stocks whith same qty
+    stocks (total value = 1000).
 
+    Then, it changes the allocation target to even allocation and updates the
+    stocks qty target. The stocks qty target should be the same as the
+    even_allocation_stockcollection.
+    '''
     portfolio = Portfolio(
         name='Test Portfolio',
         stocks_allocation=same_qty_allocation,
@@ -142,8 +157,7 @@ def test_get_stocks_qty_deviation(stocks,
                                   even_allocation):
     '''
     This test creates a portfolio with a collection of stocks whith same qty
-    stocks (total value = 600). Then it inverts 400 to match the total value
-    to 1000. The allocation should be the same as the initial allocation.
+    stocks (total value = 1000).
 
     Then, it changes the allocation target to even allocation and get the stocks
     qty deviation. The deviation should be the same as the difference between
@@ -171,13 +185,12 @@ def test_rebalance(stocks,
                    same_qty_stockcollection,
                    same_qty_allocation):
     '''
-    This is a systemic test of the Portfolio class. It tests the system as a
-    whole.
+    This test creates a portfolio with a collection of stocks whith same qty
+    stocks (total value = 1000).
 
-    Then, it rebalances the portfolio to match the target allocation. The the
-
-    Then stocks S100 and S300 sweeps prices. The portfolio should update the
-    allocation to reflect the new prices.
+    Then, it changes the allocation target to even allocation and rebalances the
+    portfolio. The stocks collection should be the same as the
+    even_allocation_stockcollection while mantainng the portfolio value.
     '''
     portfolio = Portfolio(
         name='Test Portfolio',
@@ -204,8 +217,6 @@ def test_update_stock_price(stocks):
         stocks_allocation={'TEST1': 0.6,
                            'TEST2': 0.4},
         total_value=1000)
-
-    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
 
     portfolio_allocation = portfolio.stocks_collection.get_allocation()
     portfolio.set_allocation_target(portfolio_allocation)

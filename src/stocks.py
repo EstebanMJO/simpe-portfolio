@@ -2,10 +2,10 @@
 This module contains Stock and StockCollection classes. I decided to modularize
 the code to make it easier to test and maintain.
 
-The Stock class is implemented as a Singleton to ensure that only one instance
-of each stock exists. This is useful for managing stock prices and ensuring
-that the same stock is not duplicated in the portfolio and also avoid having
-one stock with different prices.
+The Stock class has a class variable where are listed all instances of stocks
+to ensure that only one instance of each stock exists. This is useful for
+managing stock prices and ensuring that the same stock is not duplicated in the
+portfolio and also avoid having one stock with different prices.
 
 The StockCollection class is used to manage a collection of stocks. It allows
 to create a collection of stocks from a dictionary of stock symbols and
