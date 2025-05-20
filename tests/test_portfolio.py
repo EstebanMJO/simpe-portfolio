@@ -18,46 +18,50 @@ def stocks():
 
 
 @pytest.fixture
-def even_allocation_stockcollection(stocks):
-    stock_collection = StockCollection(stocks_allocation={'S100': 1/3,
-                                                          'S200': 1/3,
-                                                          'S300': 1/3},
-                                       total_value=1000.0)
+def even_allocation(stocks) -> dict[Stock: float]:
+    return {Stock('S100'): 1/3,
+            Stock('S200'): 1/3,
+            Stock('S300'): 1/3}
+
+
+@pytest.fixture
+def even_allocation_stockcollection(stocks, even_allocation) -> StockCollection:
+
+    stock_collection = StockCollection(stocks_allocation=even_allocation,
+                                       total_value=1000)
     return stock_collection
 
 
 @pytest.fixture
-def even_allocation(stocks, even_allocation_stockcollection):
-
-    return even_allocation_stockcollection.get_allocation()
+def same_qty_allocation(stocks) -> dict[Stock: float]:
+    return {Stock('S100'): 1/6,
+            Stock('S200'): 1/3,
+            Stock('S300'): 1/2}
 
 
 @pytest.fixture
-def same_qty_stockcollection(stocks):
-    stock_collection = StockCollection(stocks_qty={'S100': 1,
-                                                   'S200': 1,
-                                                   'S300': 1})
+def same_qty_stockcollection(stocks, same_qty_allocation) -> StockCollection:
+    stock_collection = StockCollection(stocks_allocation=same_qty_allocation,
+                                       total_value=1000)
     return stock_collection
 
 
-@pytest.fixture
-def same_qty_allocation(stocks, same_qty_stockcollection):
-
-    return same_qty_stockcollection.get_allocation()
-
-
-def test_portfolio_initialization(stocks, same_qty_stockcollection):
+def test_portfolio_initialization(stocks,
+                                  same_qty_allocation,
+                                  same_qty_stockcollection):
     portfolio = Portfolio(
         name='Test Portfolio',
-        stocks_collection=same_qty_stockcollection)
+        stocks_allocation=same_qty_allocation,
+        total_value=1000)
 
     assert isinstance(portfolio, Portfolio)
     assert portfolio.name == 'Test Portfolio'
     assert portfolio.stocks_collection == same_qty_stockcollection
-    assert math.isclose(portfolio.stocks_collection.get_value(), 600)
+    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
 
 
-def test_invert_money(stocks, same_qty_stockcollection, same_qty_allocation):
+def test_invest_money(stocks,
+                      same_qty_allocation):
     '''
     This tests the invert_money method of the Portfolio class. The invert_money
     method is used to invert money in the portfolio. The method should update
@@ -65,12 +69,11 @@ def test_invert_money(stocks, same_qty_stockcollection, same_qty_allocation):
     '''
     portfolio = Portfolio(
         name='Test Portfolio',
-        stocks_collection=same_qty_stockcollection)
+        stocks_allocation=same_qty_allocation,
+        total_value=600)
 
-    portfolio.invert_money(1000)
+    portfolio.invest_money(1000)
     assert math.isclose(portfolio.stocks_collection.get_value(), 1600)
-    assert len(portfolio.stocks_collection.get_allocation()) == \
-        len(same_qty_allocation)
 
     portfolio_allocation = portfolio.stocks_collection.get_allocation()
     for stock, allocation in portfolio_allocation.items():
@@ -78,7 +81,6 @@ def test_invert_money(stocks, same_qty_stockcollection, same_qty_allocation):
 
 
 def test_retire_money(stocks,
-                      same_qty_stockcollection,
                       same_qty_allocation):
     '''
     This tests the retire_money method of the Portfolio class. The retire_money
@@ -89,12 +91,11 @@ def test_retire_money(stocks,
     '''
     portfolio = Portfolio(
         name='Test Portfolio',
-        stocks_collection=same_qty_stockcollection)
+        stocks_allocation=same_qty_allocation,
+        total_value=600)
 
     portfolio.retire_money(300)
     assert math.isclose(portfolio.stocks_collection.get_value(), 300)
-    assert len(portfolio.stocks_collection.get_allocation()) == \
-        len(same_qty_allocation)
 
     portfolio_allocation = portfolio.stocks_collection.get_allocation()
     for stock, allocation in portfolio_allocation.items():
@@ -104,7 +105,38 @@ def test_retire_money(stocks,
         portfolio.retire_money(1000)
 
 
+def test_set_allocation_target(stocks,
+                               same_qty_allocation,
+                               even_allocation):
+
+    portfolio = Portfolio(
+        name='Test Portfolio',
+        stocks_allocation=same_qty_allocation,
+        total_value=600)
+
+    portfolio.set_allocation_target(even_allocation)
+
+    assert portfolio.allocation_target == even_allocation
+
+
+def test_update_stocks_qty_target(stocks,
+                                  even_allocation,
+                                  same_qty_allocation,
+                                  even_allocation_stockcollection):
+
+    portfolio = Portfolio(
+        name='Test Portfolio',
+        stocks_allocation=same_qty_allocation,
+        total_value=1000)
+
+    portfolio.set_allocation_target(even_allocation)
+    portfolio.update_stocks_qty_target()
+
+    assert portfolio.stocks_qty_target == even_allocation_stockcollection
+
+
 def test_get_stocks_qty_deviation(stocks,
+                                  same_qty_allocation,
                                   same_qty_stockcollection,
                                   even_allocation_stockcollection,
                                   even_allocation):
@@ -120,12 +152,8 @@ def test_get_stocks_qty_deviation(stocks,
 
     portfolio = Portfolio(
         name='Test Portfolio',
-        stocks_collection=same_qty_stockcollection)
-
-    assert math.isclose(portfolio.stocks_collection.get_value(), 600)
-
-    portfolio.invert_money(400)
-    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
+        stocks_allocation=same_qty_allocation,
+        total_value=1000)
 
     portfolio.set_allocation_target(even_allocation)
 
@@ -139,7 +167,7 @@ def test_get_stocks_qty_deviation(stocks,
 
 
 def test_rebalance(stocks,
-                   even_allocation_stockcollection,
+                   even_allocation,
                    same_qty_stockcollection,
                    same_qty_allocation):
     '''
@@ -153,19 +181,14 @@ def test_rebalance(stocks,
     '''
     portfolio = Portfolio(
         name='Test Portfolio',
-        stocks_collection=even_allocation_stockcollection)
-
-    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
-
-    portfolio.retire_money(400)
-    assert math.isclose(portfolio.stocks_collection.get_value(), 600)
+        stocks_allocation=even_allocation,
+        total_value=1000)
 
     portfolio.set_allocation_target(same_qty_allocation)
     portfolio.rebalance()
-    assert math.isclose(portfolio.stocks_collection.get_value(), 600)
+    assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
 
-    for stock, qty in portfolio.stocks_collection.stocks.items():
-        assert math.isclose(qty, same_qty_stockcollection.stocks[stock])
+    assert portfolio.stocks_collection == same_qty_stockcollection
 
 
 def test_update_stock_price(stocks):
@@ -176,12 +199,11 @@ def test_update_stock_price(stocks):
     stock_1 = Stock('TEST1', price=600)
     stock_2 = Stock('TEST2', price=400)
 
-    stock_collection = StockCollection(stocks_qty={'TEST1': 1,
-                                                   'TEST2': 1})
-
     portfolio = Portfolio(
         name='Test Portfolio',
-        stocks_collection=stock_collection)
+        stocks_allocation={'TEST1': 0.6,
+                           'TEST2': 0.4},
+        total_value=1000)
 
     assert math.isclose(portfolio.stocks_collection.get_value(), 1000)
 

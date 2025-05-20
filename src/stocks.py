@@ -16,6 +16,7 @@ and the allocation of each stock in the collection.
 '''
 
 from src.utils import get_valid_symbol, check_valid_allocation
+import math
 
 
 class Stock:
@@ -121,6 +122,29 @@ class StockCollection:
         else:
             print('Creating stock collection using stocks_qty')
             self._create_from_qty(stocks_qty)
+
+    def __eq__(self, other):
+        '''
+        This method is used to compare two stock collections. It returns True
+        if the collections have the same stocks and quantities.
+        '''
+
+        if not isinstance(other, StockCollection):
+            return False
+
+        if len(self.stocks) != len(other.stocks):
+            return False
+
+        if set(self.stocks.keys()) != set(other.stocks.keys()):
+            return False
+
+        is_equal = True
+        for stock, qty in self.stocks.items():
+            if not math.isclose(other.stocks[stock], qty):
+                is_equal = False
+                break
+
+        return is_equal
 
     def set_stock_qty(self, symbol: str, quantity: float) -> None:
         '''

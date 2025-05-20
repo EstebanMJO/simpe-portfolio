@@ -13,7 +13,7 @@ class Portfolio:
     def __init__(self,
                  name: str,
                  stocks_allocation: dict[str: float],
-                 total_value) -> None:
+                 total_value: float) -> None:
 
         check_valid_allocation(stocks_allocation)
         self.name = name
@@ -21,6 +21,8 @@ class Portfolio:
         self.stocks_collection = StockCollection(
             stocks_allocation=stocks_allocation,
             total_value=total_value)
+        self.stocks_qty_target = StockCollection()
+        self.allocation_target = stocks_allocation
 
         self.set_allocation_target(stocks_allocation)
         self.update_stocks_qty_target()
@@ -91,7 +93,7 @@ class Portfolio:
         for stock, qty in deviation.items():
             self.stocks_collection.modify_stock_qty(stock, qty)
 
-    def invert_money(self, value: float) -> None:
+    def invest_money(self, value: float) -> None:
         '''
         This method inverts the money in the portfolio. It buys stocks to
         augment the portfolio value while keeping the previous allocation.

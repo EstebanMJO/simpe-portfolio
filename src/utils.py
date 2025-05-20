@@ -1,3 +1,5 @@
+import math
+
 
 def get_valid_symbol(symbol: str):
     '''
@@ -14,7 +16,7 @@ def get_valid_symbol(symbol: str):
 
 def check_valid_allocation(stocks_allocation: dict[str: float]):
 
-    if sum(stocks_allocation.values()) != 1:
+    if not math.isclose(sum(stocks_allocation.values()), 1):
         raise ValueError("The sum of the allocations must be equal to 1")
 
     for symbol, allocation in stocks_allocation.items():
